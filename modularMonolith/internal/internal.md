@@ -1,0 +1,2 @@
+## What is internal for
+- Special directory for Go code base that receives special treatment by the compiler. Anything in this directory or its child directories is only accessible to the parent directories or sibling directories of the internal directory. Seeing an internal directory is a signal to other developers taht the code within is not meant to be imported into any outside applications, and this intention is backed up by the compiler
