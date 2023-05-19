@@ -3,6 +3,7 @@ package application
 import (
 	"context"
 	"muazwzxv/Micheal-stack-book/stores/internal/application/commands"
+	"muazwzxv/Micheal-stack-book/stores/internal/application/queries"
 	"muazwzxv/Micheal-stack-book/stores/internal/domain"
 )
 
@@ -18,7 +19,13 @@ type (
 		AddProduct(ctx context.Context, cmd commands.AddProduct) error
 		RemoveProduct(ctx context.Context, cmd commands.RemoveProduct) error
 	}
-	IQueries interface{}
+	IQueries interface {
+		GetStore(ctx context.Context, query queries.GetStore) (*domain.Store, error)
+		GetStores(ctx context.Context, query queries.GetStores) ([]*domain.Store, error)
+		GetParticipatingStores(ctx context.Context, query queries.GetParticipatingStores) ([]*domain.Store, error)
+		GetCatalog(ctx context.Context, query queries.GetCatalog) ([]*domain.Product, error)
+		GetProduct(ctx context.Context, query queries.GetProduct) (*domain.Product, error)
+	}
 
 	Application struct {
 		appCommands
@@ -31,18 +38,32 @@ type (
 		commands.AddProductHandler
 		commands.RemoveProductHandler
 	}
-	appQueries struct{}
+	appQueries struct {
+		queries.GetStoreHandler
+		queries.GetStoresHandler
+		queries.GetParticipatingStoresHandler
+		queries.GetCatalogHandler
+		queries.GetProductHandler
+	}
 )
+
+var _ App = (*Application)(nil)
 
 func New(stores domain.IStoreRepository, participatingStores domain.IParticipatingStoreRepository, products domain.IProductRepository) *Application {
 	return &Application{
 		appCommands: appCommands{
-			CreateStoreHandler: commands.NewCreateStoreHandler(stores),
-      EnableParticipationHandler: commands.NewEnableParticipationHandler(stores),
-      DisableParticipationHandler: commands.NewDisableParticipationHandler(stores),
-      AddProductHandler: commands.NewAddProductHandler(stores, products),
-      RemoveProductHandler: commands.NewRemoveProductHandler(stores, products),
+			CreateStoreHandler:          commands.NewCreateStoreHandler(stores),
+			EnableParticipationHandler:  commands.NewEnableParticipationHandler(stores),
+			DisableParticipationHandler: commands.NewDisableParticipationHandler(stores),
+			AddProductHandler:           commands.NewAddProductHandler(stores, products),
+			RemoveProductHandler:        commands.NewRemoveProductHandler(stores, products),
 		},
-		appQueries: appQueries{},
+		appQueries: appQueries{
+      GetStoreHandler: queries.NewGetStoreHandler(stores),
+      GetStoresHandler: queries.NewGetStoresHandler(stores),
+      GetParticipatingStoresHandler: queries.NewParticipatingStoresHandler(participatingStores),
+      GetCatalogHandler: queries.NewCatalogHandler(products),
+      GetProductHandler: queries.NewGetProductHandler(products),
+    },
 	}
 }
