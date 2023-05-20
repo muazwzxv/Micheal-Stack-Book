@@ -17,6 +17,6 @@ func NewParticipatingStoresHandler(participatingStores domain.IParticipatingStor
   }
 }
 
-func (h GetParticipatingStoresHandler) GetPArticipatingStores(ctx context.Context, _ GetParticipatingStores) ([]*domain.Store, error) {
+func (h GetParticipatingStoresHandler) GetParticipatingStores(ctx context.Context, _ GetParticipatingStores) ([]*domain.Store, error) {
   return h.participatingStores.FindAll(ctx)
 }
