@@ -36,10 +36,7 @@ func (r ParticipatingStoreRepository) FindAll(ctx context.Context) ([]*domain.St
 		return nil, errors.Wrap(err, "query participating stores")
 	}
 	defer func(rows *sql.Rows) {
-		err := rows.Close()
-		if err != nil {
-			err = errors.Wrap(err, "closing participating store rows")
-		}
+		_ = rows.Close()
 	}(rows)
 
 	stores := make([]*domain.Store, 0)

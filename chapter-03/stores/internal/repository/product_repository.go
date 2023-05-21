@@ -23,8 +23,8 @@ func NewProductRepository(tableName string, db *sql.DB) ProductRepository {
 	}
 }
 
-/**
-  Implements IProductRepository
+/*
+	Implements IProductRepository
 */
 func (r ProductRepository) FindProduct(ctx context.Context, id string) (*domain.Product, error) {
 	const query = `
@@ -70,58 +70,55 @@ func (r ProductRepository) AddProduct(ctx context.Context, product *domain.Produ
 		product.SKU,
 		product.Price,
 	)
-  if err != nil {
-    return errors.Wrap(err, "inserting product")
-  }
-  return nil
+	if err != nil {
+		return errors.Wrap(err, "inserting product")
+	}
+	return nil
 }
 
 func (r ProductRepository) RemoveProduct(ctx context.Context, id string) error {
-  const query = `DELETE FROM %s WHERE id = $1 LIMIT 1`
+	const query = `DELETE FROM %s WHERE id = $1 LIMIT 1`
 
-  _, err := r.db.ExecContext(ctx, r.table(query), id)
-  if err != nil {
-    return errors.Wrap(err, "deleting product")
-  }
-  return nil
+	_, err := r.db.ExecContext(ctx, r.table(query), id)
+	if err != nil {
+		return errors.Wrap(err, "deleting product")
+	}
+	return nil
 }
 
 func (r ProductRepository) GetCatalog(ctx context.Context, storeID string) ([]*domain.Product, error) {
-  const query = `
+	const query = `
     SELECT
       id, name, description, sku, price
     FROM %s
     WHERE
       store_id = $1`
-  products := make([]*domain.Product, 0)
-  rows, err := r.db.QueryContext(ctx, r.table(query), storeID)
-  if err != nil {
-    return nil, errors.Wrap(err, "querying products")
-  }
+	products := make([]*domain.Product, 0)
+	rows, err := r.db.QueryContext(ctx, r.table(query), storeID)
+	if err != nil {
+		return nil, errors.Wrap(err, "querying products")
+	}
 
-  defer func(rows *sql.Rows) {
-    err := rows.Close()
-    if err != nil {
-      err = errors.Wrap(err, "closing product rows")
-    }
-  }(rows)
+	defer func(rows *sql.Rows) {
+		_ = rows.Close()
+	}(rows)
 
-  for rows.Next() {
-    product := &domain.Product{
-      StoreID: storeID,
-    }
-    err := rows.Scan(&product.ID, &product.Name, &product.Description, &product.SKU, &product.Price)
-    if err != nil {
-      return nil, errors.Wrap(err, "scanning product")
-    }
-    products = append(products, product)
-  }
-  
-  if err = rows.Err(); err != nil {
-    return nil, errors.Wrap(err, "finishing product rows")
-  }
+	for rows.Next() {
+		product := &domain.Product{
+			StoreID: storeID,
+		}
+		err := rows.Scan(&product.ID, &product.Name, &product.Description, &product.SKU, &product.Price)
+		if err != nil {
+			return nil, errors.Wrap(err, "scanning product")
+		}
+		products = append(products, product)
+	}
 
-  return products, nil
+	if err = rows.Err(); err != nil {
+		return nil, errors.Wrap(err, "finishing product rows")
+	}
+
+	return products, nil
 }
 
 func (r ProductRepository) table(query string) string {
