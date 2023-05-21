@@ -10,3 +10,4 @@
 - Eventstorming for requirement gathering (pretty hard, need another read)
 - Scaffolding a modular monolith with gRPC, openapiv2 and grpc-gateway
 - Setting up migrations script for database in docker for local environment (Might move away to something better, currently it's just bash script executing sql script in PG)
+- Bulding a modular monolith and starting with the store service
