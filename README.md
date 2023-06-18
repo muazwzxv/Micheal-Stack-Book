@@ -24,8 +24,8 @@
 - Event carried state transfer
 
 ## TODO
-- Implement pub-sub internal library
-- Implement event sourcing internal libary
+- Implement pub-sub internal library -> Later change to Watermill
+- Implement event sourcing internal libary 
 - Implement serializer and deserializer internal library
 - Implement the modular monolith version
 

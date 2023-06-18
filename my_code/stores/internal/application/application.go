@@ -49,7 +49,11 @@ type (
 
 var _ App = (*Application)(nil)
 
-func New(stores domain.IStoreRepository, participatingStores domain.IParticipatingStoreRepository, products domain.IProductRepository) *Application {
+func New(
+  stores domain.IStoreRepository, 
+  participatingStores domain.IParticipatingStoreRepository, 
+  products domain.IProductRepository,
+) *Application {
 	return &Application{
 		appCommands: appCommands{
 			CreateStoreHandler:          commands.NewCreateStoreHandler(stores),
