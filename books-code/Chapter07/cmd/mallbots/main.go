@@ -3,6 +3,7 @@ package main
 import (
 	"database/sql"
 	"fmt"
+	"log"
 	"net/http"
 	"os"
 
@@ -52,6 +53,9 @@ func run() (err error) {
 	if err != nil {
 		return err
 	}
+  if err := m.db.Ping(); err != nil {
+    log.Println(err)
+  }
 	defer func(db *sql.DB) {
 		err := db.Close()
 		if err != nil {
